@@ -1,0 +1,460 @@
+zabbix_export:
+  version: '6.2'
+  date: '2025-05-26T20:31:46Z'
+  template_groups:
+    -
+      uuid: 450dc59969f84e38a637a4577092b39f
+      name: DSE
+  templates:
+    -
+      uuid: 3d762ebb4229482b9e538bd5647c7859
+      template: 'DSE 7xxx MKII'
+      name: 'DSE 7xxx MKII'
+      groups:
+        -
+          name: DSE
+      items:
+        -
+          uuid: 0b5a81778bf9453c9f4ad385eb4ba7c2
+          name: 'Battery Volts'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41385.1.4.1.3.1.7
+          key: engBatteryVolts
+          value_type: FLOAT
+          units: V
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '0.1'
+          tags:
+            -
+              tag: Application
+              value: Gerador
+          triggers:
+            -
+              uuid: 6fcf2819138a4f6a87e645e3a5e8d875
+              expression: 'last(/DSE 7xxx MKII/engBatteryVolts,#3) < 12'
+              name: 'Bateria em Estado Critico'
+              priority: HIGH
+        -
+          uuid: 7db28e492b964849a0a41ec998495709
+          name: 'Charge Battery Volts'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41385.1.4.1.3.1.6
+          key: engChargeAltVolts
+          value_type: FLOAT
+          units: V
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '0.1'
+          tags:
+            -
+              tag: Application
+              value: Gerador
+        -
+          uuid: 4605eb9b42144962890a97ecc75e9497
+          name: 'Nivel Combustivel'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41385.1.4.1.3.1.5
+          key: engFuelLevel
+          value_type: FLOAT
+          units: '%'
+          tags:
+            -
+              tag: Application
+              value: Gerador
+          triggers:
+            -
+              uuid: b559707c5ac74ec8b13c4083a8905807
+              expression: 'last(/DSE 7xxx MKII/engFuelLevel,#3)<42'
+              name: 'Nível de Combustível baixo'
+              priority: AVERAGE
+              dependencies:
+                -
+                  name: 'Nível de Combustível Muito Baixo'
+                  expression: 'last(/DSE 7xxx MKII/engFuelLevel,#3)<21'
+            -
+              uuid: fe3ccabc388b4beb9db438142510bece
+              expression: 'last(/DSE 7xxx MKII/engFuelLevel,#3)<21'
+              name: 'Nível de Combustível Muito Baixo'
+              priority: HIGH
+        -
+          uuid: 3db83ecebc4c4df0af653728464a1c69
+          name: 'Velocidade do motor'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41385.1.4.1.3.1.8
+          key: engSpeedDisplay
+          value_type: FLOAT
+          units: RPM
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '0.1'
+          tags:
+            -
+              tag: Application
+              value: Gerador
+        -
+          uuid: 85907ede56b04f3fb412b5fcae7374d4
+          name: 'Gerador Frequencia'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41385.1.4.1.2.1.2
+          key: genFreq
+          value_type: FLOAT
+          units: Hz
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '0.1'
+          tags:
+            -
+              tag: Application
+              value: Gerador
+        -
+          uuid: ca42c6a377454382bd22c417106d7559
+          name: 'Gerador L1'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41385.1.4.1.2.1.3
+          key: genL1Volts
+          value_type: FLOAT
+          units: V
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '0.1'
+          tags:
+            -
+              tag: Application
+              value: Gerador
+        -
+          uuid: c38b0df56295417a9d07751b2882068a
+          name: 'Gerador L2'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41385.1.4.1.2.1.4
+          key: genL2Volts
+          value_type: FLOAT
+          units: V
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '0.1'
+          tags:
+            -
+              tag: Application
+              value: Gerador
+        -
+          uuid: b70e825b183945f5a27327b0e05090c2
+          name: 'Gerador L3'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41385.1.4.1.2.1.5
+          key: genL3Volts
+          value_type: FLOAT
+          units: V
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '0.1'
+          tags:
+            -
+              tag: Application
+              value: Gerador
+        -
+          uuid: 3853fe09c41f400daac8b398c6b92485
+          name: 'Consumo Gerador'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41385.1.4.1.2.1.21
+          key: genTotalVA
+          value_type: FLOAT
+          units: Kva
+          tags:
+            -
+              tag: Application
+              value: Gerador
+        -
+          uuid: fb731e8e10f4457fab492bdfe0c4fdf4
+          name: 'ICMP ping'
+          type: SIMPLE
+          key: icmpping
+          tags:
+            -
+              tag: Application
+              value: Status
+          triggers:
+            -
+              uuid: 2d5c7df0ed934047bd9b11c17b6bd9b6
+              expression: 'max(/DSE 7xxx MKII/icmpping,#3)=0'
+              name: 'Unavailable by ICMP ping'
+              priority: DISASTER
+              description: |
+                Last value: {ITEM.LASTVALUE1}.
+                Last three attempts returned timeout.  Please check device connectivity.
+              manual_close: 'YES'
+        -
+          uuid: 4bcc3943dce441ac93c69e74a9099e2d
+          name: 'ICMP loss'
+          type: SIMPLE
+          key: icmppingloss
+          value_type: FLOAT
+          units: '%'
+          tags:
+            -
+              tag: Application
+              value: Status
+          triggers:
+            -
+              uuid: 3d0e7151adb943e08050990c01dd277b
+              expression: 'min(/DSE 7xxx MKII/icmppingloss,5m)>{$ICMP_LOSS_WARN} and min(/DSE 7xxx MKII/icmppingloss,5m)<100'
+              name: 'High ICMP ping loss'
+              priority: AVERAGE
+              description: |
+                Last value: {ITEM.LASTVALUE1}.
+                Last three attempts returned timeout.  Please check device connectivity.
+              manual_close: 'YES'
+              dependencies:
+                -
+                  name: 'Unavailable by ICMP ping'
+                  expression: 'max(/DSE 7xxx MKII/icmpping,#3)=0'
+        -
+          uuid: c6eaa6f457c4417ba866ccce38381f54
+          name: 'ICMP response time'
+          type: SIMPLE
+          key: icmppingsec
+          value_type: FLOAT
+          units: s
+          tags:
+            -
+              tag: Application
+              value: Status
+          triggers:
+            -
+              uuid: eb714b90946749f1b9a6e085c3ec6b49
+              expression: 'avg(/DSE 7xxx MKII/icmppingsec,5m)>{$ICMP_RESPONSE_TIME_WARN}'
+              name: 'High ICMP ping response time'
+              priority: WARNING
+              description: |
+                Last value: {ITEM.LASTVALUE1}.
+                Last three attempts returned timeout.  Please check device connectivity.
+              manual_close: 'YES'
+              dependencies:
+                -
+                  name: 'High ICMP ping loss'
+                  expression: 'min(/DSE 7xxx MKII/icmppingloss,5m)>{$ICMP_LOSS_WARN} and min(/DSE 7xxx MKII/icmppingloss,5m)<100'
+                -
+                  name: 'Unavailable by ICMP ping'
+                  expression: 'max(/DSE 7xxx MKII/icmpping,#3)=0'
+        -
+          uuid: 9760d891f93546da86517d6554095e3a
+          name: 'Rede Frequencia'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41385.1.4.1.1.1.2
+          key: mainsFreq
+          value_type: FLOAT
+          units: Hz
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '0.1'
+          tags:
+            -
+              tag: Application
+              value: Rede
+        -
+          uuid: 6fb4c0c5f1964331a22e1d8f8552ba2f
+          name: 'Rede L1'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41385.1.4.1.1.1.3
+          key: mainsL1Volts
+          value_type: FLOAT
+          units: V
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '0.1'
+          tags:
+            -
+              tag: Application
+              value: Rede
+          triggers:
+            -
+              uuid: da65c8c2949544268e763dee1abf4087
+              expression: 'last(/DSE 7xxx MKII/mainsL1Volts,#3)<100'
+              name: 'Falta de Fase 1'
+              priority: AVERAGE
+              dependencies:
+                -
+                  name: 'Falta de Energia em Mogi Mirim'
+                  expression: |
+                    min(/DSE 7xxx MKII/mainsL1Volts,#3)<100 and
+                    min(/DSE 7xxx MKII/mainsL2Volts,#3)<100 and
+                    min(/DSE 7xxx MKII/mainsL3Volts,#3)<100
+        -
+          uuid: 758b8203d1ce4f199c3f4e5f7dea6257
+          name: 'Rede L2'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41385.1.4.1.1.1.4
+          key: mainsL2Volts
+          value_type: FLOAT
+          units: V
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '0.1'
+          tags:
+            -
+              tag: Application
+              value: Rede
+          triggers:
+            -
+              uuid: 5b8bf455ed6443fe8c6b8ad7fea9a844
+              expression: 'last(/DSE 7xxx MKII/mainsL2Volts,#3)<100'
+              name: 'Falta de Fase 2'
+              priority: AVERAGE
+              dependencies:
+                -
+                  name: 'Falta de Energia em Mogi Mirim'
+                  expression: |
+                    min(/DSE 7xxx MKII/mainsL1Volts,#3)<100 and
+                    min(/DSE 7xxx MKII/mainsL2Volts,#3)<100 and
+                    min(/DSE 7xxx MKII/mainsL3Volts,#3)<100
+        -
+          uuid: af340eca2a734ed9b17ea375a626d6c7
+          name: 'Rede L3'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.41385.1.4.1.1.1.5
+          key: mainsL3Volts
+          value_type: FLOAT
+          units: V
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '0.1'
+          tags:
+            -
+              tag: Application
+              value: Rede
+          triggers:
+            -
+              uuid: 718bd5f5a15b414aa7796956edcfffea
+              expression: 'last(/DSE 7xxx MKII/mainsL3Volts,#3)<100'
+              name: 'Falta de Fase 3'
+              priority: AVERAGE
+              dependencies:
+                -
+                  name: 'Falta de Energia em Mogi Mirim'
+                  expression: |
+                    min(/DSE 7xxx MKII/mainsL1Volts,#3)<100 and
+                    min(/DSE 7xxx MKII/mainsL2Volts,#3)<100 and
+                    min(/DSE 7xxx MKII/mainsL3Volts,#3)<100
+      macros:
+        -
+          macro: '{$ICMP_LOSS_WARN}'
+          value: '20'
+        -
+          macro: '{$ICMP_RESPONSE_TIME_WARN}'
+          value: '0.10'
+      valuemaps:
+        -
+          uuid: 5f0a4d74bdc544288ae31fd2b2cb46b6
+          name: 'Service state'
+          mappings:
+            -
+              value: '0'
+              newvalue: Down
+            -
+              value: '1'
+              newvalue: Up
+  triggers:
+    -
+      uuid: e36596a1e8af403597848e9fd3fb2e8c
+      expression: |
+        min(/DSE 7xxx MKII/mainsL1Volts,#3)<100 and
+        min(/DSE 7xxx MKII/mainsL2Volts,#3)<100 and
+        min(/DSE 7xxx MKII/mainsL3Volts,#3)<100
+      name: 'Falta de Energia em Mogi Mirim'
+      priority: HIGH
+    -
+      uuid: f7785c9cb42643dc9aedf22f8dd04d7d
+      expression: |
+        (last(/DSE 7xxx MKII/genFreq,#3)>62 or
+        last(/DSE 7xxx MKII/genFreq,#3)<58) and
+        (last(/DSE 7xxx MKII/genL1Volts,#3)>100 or
+        last(/DSE 7xxx MKII/genL2Volts,#3)>100 or
+        last(/DSE 7xxx MKII/genL3Volts,#3)>100)
+      name: 'Frequencia Gerador Fora do Regulamento'
+      priority: AVERAGE
+      description: |
+        Limites regulamentares (ANEEL)
+        Ideal: exatamente 60 Hz
+        
+        Permitido (normal): entre 59,5 Hz e 60,5 Hz
+        
+        Crítico (alarme recomendado): fora da faixa [59,5 Hz – 60,5 Hz]
+    -
+      uuid: 30b3ef81ecef411abee49133cfba3148
+      expression: |
+        (last(/DSE 7xxx MKII/genL1Volts,#3)>100 or
+        last(/DSE 7xxx MKII/genL2Volts,#3)>100 or
+        last(/DSE 7xxx MKII/genL3Volts,#3)>100) and
+        (last(/DSE 7xxx MKII/mainsL1Volts,#3)<100 and
+        last(/DSE 7xxx MKII/mainsL2Volts,#3)<100 and
+        last(/DSE 7xxx MKII/mainsL3Volts,#3)<100)
+      name: 'Gerador Ligado'
+      priority: HIGH
+    -
+      uuid: 819e3669c2464a2cb8f6a251473a0e44
+      expression: |
+        (last(/DSE 7xxx MKII/genL1Volts,#3)>100 or
+        last(/DSE 7xxx MKII/genL2Volts,#3)>100 or
+        last(/DSE 7xxx MKII/genL3Volts,#3)>100) and
+        (last(/DSE 7xxx MKII/mainsL1Volts,#3)>100 and
+        last(/DSE 7xxx MKII/mainsL2Volts,#3)>100 and
+        last(/DSE 7xxx MKII/mainsL3Volts,#3)>100)
+      name: 'Gerador Ligado em Modo Teste'
+      priority: AVERAGE
+  graphs:
+    -
+      uuid: ca5d6270012049da869d6d9ee831a40b
+      name: 'Consumo Gerador'
+      graph_items:
+        -
+          color: 199C0D
+          calc_fnc: ALL
+          item:
+            host: 'DSE 7xxx MKII'
+            key: genTotalVA
+    -
+      uuid: b0a3f990f556430b89d779c66a212673
+      name: Rede
+      graph_items:
+        -
+          color: 199C0D
+          calc_fnc: ALL
+          item:
+            host: 'DSE 7xxx MKII'
+            key: mainsL1Volts
+        -
+          sortorder: '1'
+          color: F63100
+          calc_fnc: ALL
+          item:
+            host: 'DSE 7xxx MKII'
+            key: mainsL2Volts
+        -
+          sortorder: '2'
+          color: 2774A4
+          calc_fnc: ALL
+          item:
+            host: 'DSE 7xxx MKII'
+            key: mainsL3Volts
